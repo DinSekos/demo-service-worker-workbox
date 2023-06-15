@@ -1,0 +1,18 @@
+{
+  "name": "demo-service-worker-workbox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild --outfile=sw-source.js --bundle sw-source.ts && workbox injectManifest workbox-config.js",
+    "serve": "http-server -p 8080 -c-1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "workbox-precaching": "^7.0.0",
+    "workbox-routing": "^7.0.0",
+    "workbox-strategies": "^7.0.0"
+  }
+}
