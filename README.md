@@ -2,6 +2,8 @@ howto.pwa.workbox.txt
 
 # Demo of Service Worker with Workbox
 
+This is a simple demo of a Service Worker caching HTML, JS, CSS and JSON data fetched from a remote server, using Workbox.
+
 ## Table of content
 
 - [Required packages](#required-packages)
@@ -99,12 +101,12 @@ See the `serve` property in your `package.json` file.
 
 This demo is hosted on a virtual machine at the address: http://10.211.55.4:8080
 
-Because we do not either use http://localhost or a SSL certicate, the browser does not allow us to register a Service Worker. This is a browser policy.
-Therefore, we launch the browser using the following command line to allow our address. We use a dedicated parameter named `--unsafely-treat-insecure-origin-as-secure`
+Because we do not either use http://localhost or a SSL certificate, the browser does not allow us to register a Service Worker. This is a browser policy.
+Therefore, we launch the browser using the following command line to allow our virtual machine address. We use a dedicated parameter named `--unsafely-treat-insecure-origin-as-secure`
 
     $ /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --unsafely-treat-insecure-origin-as-secure=http://10.211.55.4:8080
 
-At this point, you should see in the browser inspector, all network request (html, js, css, and json from remote server)
+At this point, you should see in the browser inspector, all network requests (html, js, css, and json from remote server)
 But, none of them are cached.
 
 ## How to register a Service Worker with Workbox ?
@@ -158,7 +160,7 @@ If you need to do a change, edit the typescript source file `sw-source.ts` then 
 
 ### Now, use `workbox wizard` to create a manifest
 
-The the `sw-source.js` file will be converted into a `sw.js` file. 
+The `sw-source.js` file will be converted into a `sw.js` file. 
 To do so, you use the `workbox wizard` command line. 
 Run the following command, and answer the questions.
 
@@ -181,8 +183,8 @@ See the output of the command bellow (read the answer).
     as part of a build process. See https://goo.gl/fdTQBf for details.
     You can further customize your service worker by making changes to workbox-config.js. See https://goo.gl/8bs14N for details.
 
-The wizard creates the the manifest file that workbox will use to identify the source file and the build file.
-Here, it converts the `sw-source.js` (the source file) into the `sw.js` (build file loaded by the browser)
+The wizard creates the manifest file that `workbox` will use to identify the source file and the build file.
+Here, it converts the `sw-source.js` (the source file) into the `sw.js` (build file loaded by the browser when registering Service Worker).
 
     $ vi workbox-config.js
 
@@ -207,9 +209,9 @@ Notice the 2 properties `swSrc` and `swDest`.
     The service worker file was written to sw.js
     The service worker will precache 11 URLs, totaling 186 kB.
 
-This command create the `sw.js` file.
+This command creates the `sw.js` file.
 ***
-As a quick shortcut, you now update our `build` command to generate the `sw.js` file each time you edit the `sw-source.ts` typescript file.
+As a quick shortcut, you now update your `build` command to generate the `sw.js` file each time you edit the `sw-source.ts` typescript file.
 
     $ vi package.json
 
@@ -222,7 +224,7 @@ As a quick shortcut, you now update our `build` command to generate the `sw.js` 
 ...
 ```
 
-Now, each time your run `build` command, the following conversion are done:
+Now, each time your run `build` command, the following conversions are done:
 * `sw-source.ts` => `sw-source.js` (typescript to javascript)
 * `sw-source.js` => `sw.js` (SW source to SW build)
 ***
@@ -239,11 +241,14 @@ Now, each time your run `build` command, the following conversion are done:
 
 
 ### Finally, you need to tell the browser to use your Service Worker.
-Open you main `js/app.js` file and add following instructions:
+Open you main `js/app.js` file and add the following instructions at the end of file:
 
     $ vi js/app.js
 
 ``` js
+...
+...
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js')
