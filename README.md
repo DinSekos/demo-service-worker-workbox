@@ -1,29 +1,34 @@
-howto.pwa.workbox.txt
-
 # Demo of Service Worker with Workbox
 
 This is a simple demo of a Service Worker caching HTML, JS, CSS and JSON data fetched from a remote server, using Workbox.
 
 ## Table of content
 
+<!-- MarkdownTOC levels="2,3" autolink="true" -->
+
 - [Required packages](#required-packages)
-- [Files architecture of this demo](#files-architecture-of-this-demo)
+  - [Files architecture of this demo](#files-architecture-of-this-demo)
 - [Use a local server](#use-a-local-server)
-    - [Start the server](#start-the-server)
-    - [Start your browser](#start-your-browser)
+  - [Start the server](#start-the-server)
+  - [Start your browser](#start-your-browser)
+  - [Notice about browser policy on registering Service Worker](#notice-about-browser-policy-on-registering-service-worker)
 - [How to register a Service Worker with Workbox ?](#how-to-register-a-service-worker-with-workbox-)
-    - [Install workbox-precaching](#install-workbox-precaching)
-    - [Create a typescript file](#create-a-typescript-file)
-    - [Create a command to convert typescript into javascript](#create-a-command-to-convert-typescript-into-javascript)
-    - [Run the command to do the conversion](#run-the-command-to-do-the-conversion)
-    - [Now, use `workbox wizard` to create a manifest](#now-use-workbox-wizard-to-create-a-manifest)
-    - [Then, create your Service Worker with `workbox injectManifest`](#then-create-your-service-worker-with-workbox-injectmanifest)
-    - [Finally, you need to tell the browser to use your Service Worker.](#finally-you-need-to-tell-the-browser-to-use-your-service-worker)
-    - [Reload your browser and check the Web Inspector.](#reload-your-browser-and-check-the-web-inspector)
+  - [Install workbox-precaching](#install-workbox-precaching)
+  - [Create a typescript file](#create-a-typescript-file)
+  - [Create a command to convert typescript into javascript](#create-a-command-to-convert-typescript-into-javascript)
+  - [Run the command to do the conversion](#run-the-command-to-do-the-conversion)
+  - [Now, use `workbox wizard` to create a manifest](#now-use-workbox-wizard-to-create-a-manifest)
+  - [Then, create your Service Worker with `workbox injectManifest`](#then-create-your-service-worker-with-workbox-injectmanifest)
+  - [Finally, you need to tell the browser to use your Service Worker.](#finally-you-need-to-tell-the-browser-to-use-your-service-worker)
+  - [Reload your browser and check the Web Inspector.](#reload-your-browser-and-check-the-web-inspector)
 - [How to cache data fetched from remote server ?](#how-to-cache-data-fetched-from-remote-server-)
-    - [Register the domain of your remote server.](#register-the-domain-of-your-remote-server)
-    - [Do not forget to update your Service Worker by running the `build` command.](#do-not-forget-to-update-your-service-worker-by-running-the-build-command)
+  - [Register the domain of your remote server.](#register-the-domain-of-your-remote-server)
+  - [Do not forget to update your Service Worker by running the `build` command.](#do-not-forget-to-update-your-service-worker-by-running-the-build-command)
 - [Annex](#annex)
+- [End](#end)
+
+<!-- /MarkdownTOC -->
+
 
 ## Required packages
 
@@ -67,9 +72,15 @@ Required development packages
     ├── sw-source.ts        (Service Worker Typescript Source - SWTS)
     └── workbox-config.js
 
-## Use a local server 
+## Use a local server
 
 Add a command to your `package.json` to start the local server.
+
+``` json
+"serve": "http-server -p 8080 -c-1"
+```
+
+Notice we use the port 8080.
 
 See the `serve` property in your `package.json` file.
 
@@ -99,15 +110,34 @@ See the `serve` property in your `package.json` file.
 
 ### Start your browser
 
-This demo is hosted on a virtual machine at the address: http://10.211.55.4:8080
-
-Because we do not either use http://localhost or a SSL certificate, the browser does not allow us to register a Service Worker. This is a browser policy.
-Therefore, we launch the browser using the following command line to allow our virtual machine address. We use a dedicated parameter named `--unsafely-treat-insecure-origin-as-secure`
-
-    $ /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --unsafely-treat-insecure-origin-as-secure=http://10.211.55.4:8080
+Load in your browser the address http://localhost:8080
 
 At this point, you should see in the browser inspector, all network requests (html, js, css, and json from remote server)
 But, none of them are cached.
+
+### Notice about browser policy on registering Service Worker
+
+Depending on whether you're using HTTP or HTTPS, you may encouter troubles when registering a Service Worker.
+
+| Case | Host                      | Register Service Worker is allowed?  |
+|------|---------------------------|--------------------------------------|
+| 1    | Localhost address         | Yes.                                 |
+| 2    | Remote address with HTTPS | Yes.                                 |
+| 3    | Remote address with HTTP  | No, forbidden by the browser policy. |
+
+#### How to work around this issue ?
+
+When coding this demo, we used a Virtual Machine using an HTTP address. Because the virtual machine is considered as a remote server, we were in the case 3: register a Service Worker is forbidden.
+
+Example of VM address: http://10.211.55.4:8080
+
+Therefore, we launch the browser using the following command line to allow our virtual machine address.
+
+Example with Google Chrome on macOS:
+
+We use a dedicated parameter named `--unsafely-treat-insecure-origin-as-secure` to achieve this goal.
+
+    $ /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --unsafely-treat-insecure-origin-as-secure=http://10.211.55.4:8080
 
 ## How to register a Service Worker with Workbox ?
 
@@ -128,7 +158,14 @@ precacheAndRoute(self.__WB_MANIFEST);
 ### Create a command to convert typescript into javascript
 
 Edit your `package.json` file.
-Add a `build` command to do the conversion. 
+
+Add a `build` command to do the conversion.
+
+``` json
+"build": "esbuild --outfile=sw-source.js --bundle sw-source.ts",
+```
+
+
 Use `esbuild` to do the conversion.
 
     $ vi package.json
@@ -141,7 +178,7 @@ Use `esbuild` to do the conversion.
 ...
 ```
 
-Here, you tell `esbuild` to convert `sw-source.ts` (the bundle) into `sw-source.js` (the outfile). 
+Here, you tell `esbuild` to convert `sw-source.ts` (the bundle) into `sw-source.js` (the outfile).
 
 ### Run the command to do the conversion
 
@@ -218,6 +255,12 @@ This command creates the `sw.js` file.
 ***
 As a quick shortcut, you now update your `build` command to generate the `sw.js` file each time you edit the `sw-source.ts` typescript file.
 
+``` json
+"build": "esbuild --outfile=sw-source.js --bundle sw-source.ts && workbox injectManifest workbox-config.js",
+```
+
+Edit your `package.json` file.
+
     $ vi package.json
 
 ``` js
@@ -281,7 +324,7 @@ Also, you should see your html, css, and js files cached into the Storage Cache.
 Go offline and reload the page.
 Your html, css, and js files are now loaded from cache, but notice that the JSON data from remote server are not cached !
 
-## How to cache data fetched from remote server ? 
+## How to cache data fetched from remote server ?
 
 To cache the data fetched from the remote server, you need to do more work ...
 
