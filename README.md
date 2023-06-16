@@ -2,6 +2,10 @@
 
 This is a simple demo of a Service Worker caching HTML, JS, CSS and JSON data fetched from a remote server, using Workbox.
 
+The demo app display a list of public APIs, fetched from a remote server.
+
+You will find below the different steps to go through to build this demo.
+
 ## Table of content
 
 <!-- MarkdownTOC levels="2,3" autolink="true" -->
