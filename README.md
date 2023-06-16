@@ -21,7 +21,7 @@ howto.pwa.workbox.txt
 - [How to cache data fetched from remote server ?](#how-to-cache-data-fetched-from-remote-server-)
     - [Register the domain of your remote server.](#register-the-domain-of-your-remote-server)
     - [Do not forget to update your Service Worker by running the `build` command.](#do-not-forget-to-update-your-service-worker-by-running-the-build-command)
-
+- [Annex](#annex)
 
 ## Required packages
 
@@ -311,11 +311,12 @@ You should see a new cache named `api-responses` into the Storage Cache of the W
 If you go offline, data from your remote server are available by reading the cache.
 
 
-# Annex
-Sources
+## Annex
+
+Documentation Sources
 
 * https://developer.chrome.com/docs/workbox/precaching-with-workbox/
 * https://developer.chrome.com/docs/workbox/the-ways-of-workbox/
 * https://developer.chrome.com/docs/workbox/handling-service-worker-updates/
 
-# End
+## End
