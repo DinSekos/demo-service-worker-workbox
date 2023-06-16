@@ -50,9 +50,9 @@ Required development packages
     ├── 404.html
     ├── css
     │   └── app.css
-    ├── index.html      (Display data fetch from remote server)
+    ├── index.html          (Display data fetch from remote server)
     ├── js
-    │   └── app.js      (Load json data from remote server, and register Service Worker)
+    │   └── app.js          (Load JSON data from remote server, and register Service Worker)
     ├── node_modules
     │   ├── @esbuild
     │   ├── workbox-core
@@ -62,9 +62,9 @@ Required development packages
     ├── package.json
     ├── package-lock.json
     ├── README.md
-    ├── sw.js
-    ├── sw-source.js
-    ├── sw-source.ts
+    ├── sw.js               (Service Worker)
+    ├── sw-source.js        (Service Worker Source - SWS)
+    ├── sw-source.ts        (Service Worker Typescript Source - SWTS)
     └── workbox-config.js
 
 ## Use a local server 
@@ -160,15 +160,18 @@ If you need to do a change, edit the typescript source file `sw-source.ts` then 
 
 ### Now, use `workbox wizard` to create a manifest
 
-The `sw-source.js` file will be converted into a `sw.js` file. 
-To do so, you use the `workbox wizard` command line. 
-Run the following command, and answer the questions.
+Run the following command and answer the questions.
 
     $ workbox wizard --injectManifest
 
-Make sure to tell the wizard to use `sw-source.js` when it asks *Where's your existing service worker file?*
+Make sure to tell the wizard to use `sw-source.js` when it asks:
+- *Where's your existing service worker file?* `sw-source.js`
 
-See the output of the command bellow (read the answer).
+You can leave the default answers for the following questions:
+- *Where would you like your service worker file to be saved?* `sw.js`
+- *Where would you like to save these configuration options?* `workbox-config.js`
+
+See the output of the command bellow (read the answers).
 
     ? What is the root of your web app (i.e. which directory do you deploy)? Manually enter path
     ? Please enter the path to the root of your web app: .
@@ -183,8 +186,10 @@ See the output of the command bellow (read the answer).
     as part of a build process. See https://goo.gl/fdTQBf for details.
     You can further customize your service worker by making changes to workbox-config.js. See https://goo.gl/8bs14N for details.
 
-The wizard creates the manifest file that `workbox` will use to identify the source file and the build file.
-Here, it converts the `sw-source.js` (the source file) into the `sw.js` (build file loaded by the browser when registering Service Worker).
+The wizard creates the manifest file that `workbox` will use to identify the Service Worker Source file (SWS) it will need to convert into the Service Worker file (SW) .
+Here, it converts `sw-source.js` into `sw.js`.
+
+The `sw.js` will be later registered in the browser as the Service Worker (see `js/app.js`).
 
     $ vi workbox-config.js
 
@@ -226,7 +231,7 @@ As a quick shortcut, you now update your `build` command to generate the `sw.js`
 
 Now, each time your run `build` command, the following conversions are done:
 * `sw-source.ts` => `sw-source.js` (typescript to javascript)
-* `sw-source.js` => `sw.js` (SW source to SW build)
+* `sw-source.js` => `sw.js` (Service Worker Source to SW)
 ***
 
     $ npm run build
@@ -274,7 +279,7 @@ In a production environement you can get rid of the `console.log()` messages.
 You should see your SW in the Application tab.
 Also, you should see your html, css, and js files cached into the Storage Cache.
 Go offline and reload the page.
-Your html, css, and js files are now loaded from cache, but notice that the data from remote server are not cached !
+Your html, css, and js files are now loaded from cache, but notice that the JSON data from remote server are not cached !
 
 ## How to cache data fetched from remote server ? 
 
@@ -285,7 +290,7 @@ You will need those npm packages:
     $ npm i workbox-routing --save-dev
     $ npm i workbox-strategies --save-dev
 
-### Declare the domain of your remote server.
+### Register the domain of your remote server.
 
 Edit your `sw-source.ts` file.
 
